@@ -1,11 +1,14 @@
 import sys
 from os import system
 
-grid = open("grid-2.data", "r")
+grid_file = open("meta", "r")
+f = grid_file.readline().strip()
+grid = open(f, "r")
 lines = grid.readlines()
 grid.close()
 
 grid_array = []
+status_bars = 27
 
 def clear():
     _ = system('clear')
@@ -100,13 +103,34 @@ def parse_file():
                         num = int(trio[x])
                     nums_int.append(num)
             grid_array.append(nums_int)
+    sys.stdout.write("\033[?25l]")
+
+def print_status_bar(g):
+    print("")
+    blank_count = 0
+    for r in range(9):
+        for c in range(9):
+            if g[r][c] == 0:
+                blank_count = blank_count+1
+    full_count = 81 - blank_count
+    pbar = int(full_count/81.0*status_bars)
+    bar = "["
+    for i in range(pbar):
+        bar += unichr(0x2588)
+    for i in range(status_bars - pbar):
+        bar += " "
+    bar += "] "
+    bar += str(full_count) + "/81"
+    print(bar)
 
 def print_grid(g):
     clear()
+    print("Sudoku Solver v0.3.1\n")
     for array in g:
         for char in array:
             sys.stdout.write(str(char))
         sys.stdout.write('\n')
+    print_status_bar(g)
 
 def board_full(g):
     for r in range(9):
@@ -134,3 +158,4 @@ def find_solution(grid_arr):
 
 parse_file()
 print("Found a solution?: " + str(find_solution(grid_array)))
+sys.stdout.write("\033[?25h")
