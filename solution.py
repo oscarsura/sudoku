@@ -33,8 +33,24 @@ def check_cols(grid_arr):
                 int_set.add(char)
     return True
 
-def check_matrices(grid_arr):
+def check_matrix(grid_arr, r, c):
+    int_set = set()
+    for row in range(3):
+        for col in range(3):
+            val = grid_arr[r + row][c + col]
+            if val == 0: continue
+            if val in int_set:
+                return False
+            else:
+                int_set.add(val)
     return True
+
+def check_matrices(grid_arr):
+    retval = True
+    for row in range(0, 9, 3):
+        for col in range(0, 9, 3):
+            retval = check_matrix(grid_arr, row, col)
+    return retval
 
 def valid_board(g):
     return check_rows(g) and check_cols(g) and check_matrices(g)
