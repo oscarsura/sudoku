@@ -103,7 +103,7 @@ def parse_file():
                         num = int(trio[x])
                     nums_int.append(num)
             grid_array.append(nums_int)
-    sys.stdout.write("\033[?25l]")
+    sys.stdout.write("\033[?25l")
 
 def print_status_bar(g):
     print("")
