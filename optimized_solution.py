@@ -59,6 +59,16 @@ def parse_lines():
         global grid_array
         grid_array.append(int_row)
 
+def fill_cand_array():
+    global cand_array
+    nums = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    for i in range(9):
+        cand_array.append([[], [], [], [], [], [], [], [], []])
+
+    for r in range(9):
+        for c in range(9):
+            cand_array[r][c].append(nums)
+
 def print_status():
     return
 
@@ -74,3 +84,20 @@ def print_grid():
 init()
 parse_lines()
 print_grid()
+fill_cand_array()
+
+#print("print(cand_array):")
+#print(cand_array)
+#print("")
+
+#print("print(cand_array[0]):")
+#print(cand_array[0])
+#print("")
+
+#print("print(cand_array[0][0]):")
+#print(cand_array[0][0])
+#print("")
+
+#print("print(cand_array[0][0][0]):")
+#print(cand_array[0][0][0])
+#print("")
