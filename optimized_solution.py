@@ -23,15 +23,15 @@ def used_in_row(grid, row, num):
             return True
     return False
 
-def used_in_col(grid, row, num):
+def used_in_col(grid, col, num):
     for row in range(9):
         if grid[row][col] == num:
             return True
     return False
 
 def used_in_subgrid(grid, r_start, c_start, num):
-    for r in range(9):
-        for c in range(9):
+    for r in range(3):
+        for c in range(3):
             if grid[r_start + r][c_start + c] == num:
                 return True
     return False
@@ -39,7 +39,7 @@ def used_in_subgrid(grid, r_start, c_start, num):
 def valid_move(grid, row, col, num):
     return (not used_in_row(grid, row, num) and
             not used_in_col(grid, col, num) and
-            not used_in_subgrid(grid, row - row % 3, col - col % 3, num))
+            not used_in_subgrid(grid, row - (row % 3), col - (col % 3), num))
 
 def print_lines():
     for line in lines:
@@ -72,7 +72,6 @@ def print_status():
     return
 
 def print_grid():
-    clear()
     print('Sudoku Solver v2.0.1\n')
     for row in grid_array:
         for num in row:
@@ -89,6 +88,15 @@ def trim_cand_tree():
                     if not val == x:
                         cand_array[r][c].remove(x)
 
+def elim_cand_tree():
+    for r in range(9):
+        for c in range(9):
+            val = grid_array[r][c]
+            if val == 0:
+                for x in range(1, 10, 1):
+                    if not valid_move(grid_array, r, c, x) and x in cand_array[r][c]:
+                        cand_array[r][c].remove(x)
+
 init()
 parse_lines()
 print_grid()
@@ -96,3 +104,4 @@ fill_cand_array()
 
 trim_cand_tree()
 elim_cand_tree()
+print(cand_array)
