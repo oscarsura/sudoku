@@ -1,4 +1,4 @@
-import sys
+import sys, copy
 from os import system
 
 grid_array = []
@@ -62,12 +62,11 @@ def parse_lines():
 def fill_cand_array():
     global cand_array
     nums = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    for i in range(9):
-        cand_array.append([[], [], [], [], [], [], [], [], []])
-
-    for r in range(9):
-        for c in range(9):
-            cand_array[r][c].append(nums)
+    temp = []
+    for x in range(9):
+        temp.append(copy.deepcopy(nums))
+    for x in range(9):
+        cand_array.append(copy.deepcopy(temp))
 
 def print_status():
     return
@@ -81,23 +80,19 @@ def print_grid():
         sys.stdout.write('\n')
     print_status()
 
+def trim_cand_tree():
+    for r in range(9):
+        for c in range(9):
+            val = grid_array[r][c]
+            if not val == 0:
+                for x in range(1, 10, 1):
+                    if not val == x:
+                        cand_array[r][c].remove(x)
+
 init()
 parse_lines()
 print_grid()
 fill_cand_array()
 
-#print("print(cand_array):")
-#print(cand_array)
-#print("")
-
-#print("print(cand_array[0]):")
-#print(cand_array[0])
-#print("")
-
-#print("print(cand_array[0][0]):")
-#print(cand_array[0][0])
-#print("")
-
-#print("print(cand_array[0][0][0]):")
-#print(cand_array[0][0][0])
-#print("")
+trim_cand_tree()
+elim_cand_tree()
