@@ -1,12 +1,18 @@
 import sys, time
+import hashlib
 from os import system
 
+output_dir = 'stats/'
 unop = 'python solution.py'
 reop = 'python optimized_solution.py'
-rounds = 3
+rounds = 10
 
 unopt_array = []
 optim_array = []
+
+console = False
+raw = True
+dump = True
 
 def clear():
     _ = system('clear')
@@ -30,6 +36,13 @@ def test(s):
 
 def print_results():
     clear()
+    if not console:
+        return
+    if raw:
+        for x in range(rounds):
+            sys.stdout.write(str(unopt_array[x]) + '\n')
+            sys.stdout.write(str(optim_array[x]) + '\n')
+        return
     print('Sudoku Algorithm Test Driver v0.0.1\n')
     for x in range(rounds):
         sys.stdout.write('unoptimized-time ' + str(x) + ': ' + str(unopt_array[x]) + '\n')
@@ -37,7 +50,19 @@ def print_results():
         sys.stdout.write('algorithmadvantage ' + str(optim_array[x] - unopt_array[x]) + '\n')
         sys.stdout.write('----------------------------------\n')
 
+def dump():
+    if not dump:
+        return
+    curr_time = str(time.time())
+    filename_md5 = hashlib.md5(bytes(curr_time))
+    filename = output_dir + filename_md5.hexdigest()
+    out = open(filename, 'w+')
+    for x in range(rounds):
+        out.write(str(unopt_array[x]) + '\n')
+        out.write(str(optim_array[x]) + '\n')
+
 init()
 test(unop)
 test(reop)
 print_results()
+dump()
