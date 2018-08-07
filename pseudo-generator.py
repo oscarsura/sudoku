@@ -25,7 +25,6 @@ grid_array = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
  
 def clear():
     _ = system('clear')
-    #sys.stdout.write("\033[2J")
 
 def hide_cursor():
     sys.stdout.write("\033[?25l")

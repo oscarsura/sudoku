@@ -5,10 +5,21 @@ grid_array = []
 cand_array = []
 lines = []
 
+pbars = 27
+num_clues = 81
+pchar = 0x2588
+
 def clear():
     _ = system('clear')
 
+def hide_cursor():
+    sys.stdout.write('\033[?25l')
+
+def show_cursor():
+    sys.stdout.write('\033[?25h')
+
 def init():
+    hide_cursor()
     data_file = open('meta', 'r')
     grid_file = data_file.readline().strip()
     istream = open(grid_file, 'r')
@@ -16,6 +27,9 @@ def init():
     lines = istream.readlines()
     istream.close()
     data_file.close()
+
+def dest():
+    show_cursor()
 
 def used_in_row(grid, row, num):
     for col in range(9):
@@ -69,9 +83,26 @@ def fill_cand_array():
         cand_array.append(copy.deepcopy(temp))
 
 def print_status():
-    return
+    print('')
+    full_count = 0
+    for r in range(9):
+        for c in range(9):
+            if not grid_array[r][c] == 0:
+                full_count+=1
+    pbar_num = (full_count+0.00)/num_clues
+    pbar = int(pbar_num*pbars)
+
+    status = '['
+    for x in range(pbar):
+        status += unichr(pchar)
+    for x in range(pbars - pbar):
+        status += ' '
+    status += '] '
+    status += str(full_count) + '/' + str(num_clues)
+    print(status)
 
 def print_grid():
+    clear()
     print('Sudoku Solver v2.0.1\n')
     for row in grid_array:
         for num in row:
@@ -97,11 +128,48 @@ def elim_cand_tree():
                     if not valid_move(grid_array, r, c, x) and x in cand_array[r][c]:
                         cand_array[r][c].remove(x)
 
+def get_blank():
+    for r in range(9):
+        for c in range(9):
+            if grid_array[r][c] == 0:
+                return r, c
+    return -1,-1
+
+def board_full():
+    for r in range(9):
+        for c in range(9):
+            if grid_array[r][c] == 0:
+                return False
+    return True
+
+def find_solution():
+    print_grid()
+    if board_full():
+        return True
+    r, c = get_blank()
+    if r == -1 or c == -1:
+        return False
+
+    num_cand = len(cand_array[r][c])
+    for x in range(num_cand):
+        move = cand_array[r][c][x]
+        if valid_move(grid_array, r, c, move):
+            global grid_array
+            grid_array[r][c] = move
+            if find_solution():
+                return True
+            grid_array[r][c] = 0
+    return False
+
+def print_solution():
+    print('Found a solution?: ' + str(find_solution()))
+    
 init()
 parse_lines()
-print_grid()
 fill_cand_array()
 
 trim_cand_tree()
 elim_cand_tree()
-print(cand_array)
+
+print_solution()
+dest()
