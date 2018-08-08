@@ -23,9 +23,16 @@ num_rows = 38
 float_len = 14
 
 r,c = 1,1
+command_c = 42
 
 def clear():
     _ = system('clear')
+
+def clear_line(r,c):
+    clearstr = '\033[' + str(r) + ';' + str(c) + 'H'
+    delstr = '\033[K'
+    sys.stdout.write(clearstr)
+    sys.stdout.write(delstr)	
 
 def hide_cursor():
     sys.stdout.write('\033[?25l')
@@ -34,6 +41,7 @@ def show_cursor():
     sys.stdout.write('\033[?25h')
 
 def init():
+    hide_cursor()
     build_row(top_left, mid_horiz, top_right)
     for x in range(num_rows):
         build_row(mid_verti, space_chr, mid_verti)
@@ -113,7 +121,24 @@ def print_stats():
     write_string_buffer('avg-optim=' + str(avg_optim), '0', float_len)
     write_string('total-runs=' + str(runs))
 
+def get_input():
+    line = raw_input('command-line: ')
+    clear_line(command_c-1, 0)
+    return line
+
+def display_results():
+    line = get_input()
+    while True:
+        if 'break' in line:
+            return
+        line = get_input()
+
+def dest():
+    show_cursor()
+
 init()
 print_data_files()
 print_stats()
 print_visual()
+display_results()
+dest()
