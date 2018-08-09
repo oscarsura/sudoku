@@ -27,12 +27,17 @@ float_len = 14
 r,c = 1,1
 command_c = 42
 
+data_index = 0
+
 def clear():
     _ = system('clear')
 
+def l_clear():
+    _ = d_clear_line() if dated else clear_line(command_c-1,0)
+
 def d_clear_line():
-    sys.stdout.write("\033[F") 
-    sys.stdout.write("\033[K") 
+    sys.stdout.write('\033[F')
+    sys.stdout.write('\033[K') 
 
 def clear_line(r,c):
     clearstr = '\033[' + str(r) + ';' + str(c) + 'H'
@@ -129,14 +134,27 @@ def print_stats():
 
 def get_input():
     line = raw_input('command-line: ')
-    _ = d_clear_line() if dated else clear_line(command_c-1,0)
+    l_clear()
     return line
+
+def next_entry():
+
+def prev_entry():
+
+def switch_command(arg):
+    switch = {
+        'next' : next_entry,
+        'prev' : prev_entry,
+        'break' : exit,
+        'exit' : exit
+    }
+    func = switch.get(arg, lambda: l_clear)
+    func()
 
 def display_results():
     line = get_input()
     while True:
-        if 'break' in line:
-            return
+        switch_command(line)
         line = get_input()
 
 def dest():
