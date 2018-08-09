@@ -115,6 +115,7 @@ def write_string_buffer(s, char, buflen):
             c+=1
         r+=1
         c=1
+    print_visual()
 
 def write_string(s):
     global visual_array
@@ -124,6 +125,7 @@ def write_string(s):
         c+=1
     r+=1
     c=1
+    print_visual()
 
 def print_stats():
     avg_unopt = sum(unopt_array)/len(unopt_array)
@@ -137,9 +139,14 @@ def get_input():
     l_clear()
     return line
 
+def move_entry(direction):
+    sys.stdout.write('moving')
+
 def next_entry():
+    move_entry(1)
 
 def prev_entry():
+    move_entry(-1)
 
 def switch_command(arg):
     switch = {
