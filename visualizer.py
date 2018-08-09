@@ -1,6 +1,8 @@
 import sys, os
 from os import system, listdir
 
+dated = True
+
 top_left  = u'\u2554'
 bot_left  = u'\u255a'
 top_right = u'\u2557'
@@ -27,6 +29,10 @@ command_c = 42
 
 def clear():
     _ = system('clear')
+
+def d_clear_line():
+    sys.stdout.write("\033[F") 
+    sys.stdout.write("\033[K") 
 
 def clear_line(r,c):
     clearstr = '\033[' + str(r) + ';' + str(c) + 'H'
@@ -123,7 +129,7 @@ def print_stats():
 
 def get_input():
     line = raw_input('command-line: ')
-    clear_line(command_c-1, 0)
+    _ = d_clear_line() if dated else clear_line(command_c-1,0)
     return line
 
 def display_results():
