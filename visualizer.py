@@ -170,7 +170,6 @@ def get_input():
     l_clear()
     return line
 
-
 def next_entry():
     global index_dataentry
     if index_dataentry+1 > entries_per_file:
@@ -209,6 +208,12 @@ def switch_command(arg):
 
 def trunc(string, i):
     return string[:i]
+
+def expand(s, i, char):
+    string = str(s)
+    for x in range(i):
+       string += str(char)
+    return string
 
 dash_horizontal = u'\u2505'
 dash_vertical = u'\u2507'
@@ -259,14 +264,16 @@ def display_metadata():
     optim_rank = find_rank(optim_array, optim_time)
     unopt_time = data_entry_array[fileno][1][(index_dataentry*2)-2].strip()
     unopt_rank = find_rank(unopt_array, unopt_time)
+    optim_rank_str = expand(optim_rank, float_len - len(str(optim_rank)), ' ')
+    unopt_rank_str = expand(unopt_rank, float_len - len(str(unopt_rank)), ' ')
     arrow = u'\u21FE'    
-    formatted_data.append('  ' + 'optim-rank ' + arrow + ' ' + str(optim_rank) + '  ')
-    formatted_data.append('  ' + 'unopt-rank ' + arrow + ' ' + str(unopt_rank) + '  ')
-    formatted_data.append('  ' + 'optim-time ' + arrow + ' ' + str(optim_time) + '  ')
-    formatted_data.append('  ' + 'unopt-time ' + arrow + ' ' + str(unopt_time) + '  ')
+    formatted_data.append('  ' + 'optim-rank ' + arrow + ' ' + optim_rank_str)
+    formatted_data.append('  ' + 'unopt-rank ' + arrow + ' ' + unopt_rank_str)
+    formatted_data.append('  ' + 'optim-time ' + arrow + ' ' + str(optim_time))
+    formatted_data.append('  ' + 'unopt-time ' + arrow + ' ' + str(unopt_time))
     numlines = len(formatted_data)
     for x in range(numlines):
-        write_string_set(formatted_data[x].strip(), 15+x, 5)
+        write_string_set(formatted_data[x].strip('\r\n'), 15+x, 8) 
 
 def display_gridfile():
     meta = open('meta', 'r')
