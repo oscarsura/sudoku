@@ -34,8 +34,8 @@ r,c = default_row, default_col_left
 rev_r, rev_c = default_row, default_col_right
 command_c = 42
 
-index_datafile = 0 #index within the file
-index_dataentry = 0 #index within all entries
+index_datafile = 1 
+index_dataentry = 1 
 
 def clear():
     _ = system('clear')
@@ -170,14 +170,32 @@ def get_input():
 def move_entry(direction):
     print(data_entry_array)
 
+
+
 def next_entry():
     global index_dataentry
-    index_dataentry = (index_dataentry+1) % (entries_per_file+1)
+    if index_dataentry+1 > entries_per_file:
+        global index_datafile
+        if index_datafile+1 > data_files:
+            index_datafile = 1
+        else:
+            index_datafile = (index_datafile+1) % (data_files+1)
+        index_dataentry = 1
+    else:
+        index_dataentry = (index_dataentry+1) % (entries_per_file+1)
     update()
 
 def prev_entry():
     global index_dataentry
-    index_dataentry = (index_dataentry-1) % (entries_per_file+1)
+    if index_dataentry-1 == 0:
+        global index_datafile
+        if index_datafile-1 == 0:
+            index_datafile = data_files
+        else:
+            index_datafile = (index_datafile-1) % (data_files+1)
+        index_dataentry = entries_per_file
+    else:
+        index_dataentry = (index_dataentry-1) % (entries_per_file+1)
     update()
 
 def switch_command(arg):
