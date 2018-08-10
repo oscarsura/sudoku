@@ -37,6 +37,8 @@ command_c = 42
 index_datafile = 1 
 index_dataentry = 1 
 
+iqr_range = 50
+
 def clear():
     _ = system('clear')
 
@@ -199,7 +201,9 @@ def prev_entry():
 def switch_command(arg):
     switch = {
         'next' : next_entry,
+        'n' : next_entry,
         'prev' : prev_entry,
+        'p' : prev_entry,
         'break' : exit,
         'exit' : exit
     }
@@ -273,7 +277,9 @@ def display_metadata():
     formatted_data.append('  ' + 'unopt-time ' + arrow + ' ' + str(unopt_time))
     numlines = len(formatted_data)
     for x in range(numlines):
-        write_string_set(formatted_data[x].strip('\r\n'), 15+x, 8) 
+        write_string_set(formatted_data[x].strip('\r\n'), 15+x, 8)
+    display_iqr(optim_rank, True, 30)
+    display_iqr(unopt_rank, False, 32)
 
 def display_gridfile():
     meta = open('meta', 'r')
@@ -291,6 +297,23 @@ def display_datafile():
     filename = data_file_array[index_datafile-1][0]
     filename = 'file: ' + trunc(filename, 11)
     write_string_set(filename, 1, num_cols-len(filename)-1)
+
+def display_iqr(rank, optimized, r):
+    arr_iqr = ''
+    string = 'optim ' if optimized else 'unopt '
+    prefix_length = len(string)
+    spacing = int((num_cols - iqr_range - prefix_length)/2)
+    for x in range(spacing):
+        arr_iqr += ' '
+    arr_iqr += string
+    arr_iqr += '['
+    bars = int((1 -((rank+0.0)/runs))*iqr_range)
+    for x in range(bars):
+        arr_iqr += u'\u2588'
+    for x in range(iqr_range-bars-2):
+        arr_iqr += 'X'
+    arr_iqr += ']'
+    write_string_set(arr_iqr, r, 1)
 
 def display_indices():
     entries = entries_per_file
