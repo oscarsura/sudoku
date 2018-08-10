@@ -243,30 +243,30 @@ def format_gridfile(lines):
     return formatted_lines
 
 def find_rank(arr, time):
-    numentries = len(arr)
+    numentries = runs/2
     for x in range(numentries):
-        if arr[x] == time:
+        if str(arr[x])[:10] == str(time)[:10]:
             return x
     return -1
-
 
 def display_metadata():
     formatted_data = []
     meta = 'metadata'
     formatted_data.append(meta)
     fileno = index_datafile-1
+    global optim_array, unopt_array
     optim_time = data_entry_array[fileno][1][(index_dataentry*2)-1].strip()
     optim_rank = find_rank(optim_array, optim_time)
     unopt_time = data_entry_array[fileno][1][(index_dataentry*2)-2].strip()
     unopt_rank = find_rank(unopt_array, unopt_time)
     arrow = u'\u21FE'    
-    formatted_data.append('  ' + 'optim-rank ' + arrow + ' ' + str(optim_rank))
-    formatted_data.append('  ' + 'unopt-rank ' + arrow + ' ' + str(unopt_rank))
-    formatted_data.append('  ' + 'optim-time ' + arrow + ' ' + str(optim_time))
-    formatted_data.append('  ' + 'unopt-time ' + arrow + ' ' + str(unopt_time))
+    formatted_data.append('  ' + 'optim-rank ' + arrow + ' ' + str(optim_rank) + '  ')
+    formatted_data.append('  ' + 'unopt-rank ' + arrow + ' ' + str(unopt_rank) + '  ')
+    formatted_data.append('  ' + 'optim-time ' + arrow + ' ' + str(optim_time) + '  ')
+    formatted_data.append('  ' + 'unopt-time ' + arrow + ' ' + str(unopt_time) + '  ')
     numlines = len(formatted_data)
     for x in range(numlines):
-        write_string_set(formatted_data[x], 15+x, 5)
+        write_string_set(formatted_data[x].strip(), 15+x, 5)
 
 def display_gridfile():
     meta = open('meta', 'r')
