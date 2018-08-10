@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, time
 from os import system, listdir
 
 dated = True
@@ -198,12 +198,20 @@ def prev_entry():
         index_dataentry = (index_dataentry-1) % (entries_per_file+1)
     update()
 
+def cycle():
+    for x in range(runs/2):
+        next_entry()
+        update()
+        time.sleep(1)
+
 def switch_command(arg):
     switch = {
         'next' : next_entry,
         'n' : next_entry,
         'prev' : prev_entry,
         'p' : prev_entry,
+        'iterate' : cycle,
+        'i' : cycle,
         'break' : exit,
         'exit' : exit
     }
