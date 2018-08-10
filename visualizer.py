@@ -211,8 +211,49 @@ def switch_command(arg):
 def trunc(string, i):
     return string[:i]
 
+dash_horizontal = u'\u2505'
+dash_vertical = u'\u2507'
+
+def format_gridfile(lines):
+    bar_horizontal = ''
+    for x in range(10):
+        bar_horizontal += ' ' + dash_horizontal
+    formatted_lines = []
+    row_count = 0
+    numlines = len(lines)
+    for x in range(numlines):
+        if lines[x].strip() in '': continue
+        if row_count % 3 == 0:
+            formatted_lines.append(bar_horizontal)
+        line = ''
+        col_count = 0
+        for char in lines[x].strip():
+            if char == ' ': continue
+            if col_count % 3 == 0:
+                line += dash_vertical
+            char = char if char not in ['_'] else ' '
+            line += ' ' + str(char)
+            col_count+=1
+        line += dash_vertical
+        formatted_lines.append(line)
+        row_count+=1
+    formatted_lines.append(bar_horizontal)
+    return formatted_lines
+
+def display_gridfile():
+    meta = open('meta', 'r')
+    gridfile = meta.readline()
+    meta.close()
+    grid = open(gridfile.strip(), 'r')
+    lines = grid.readlines()
+    grid.close()
+    formatted_lines = format_gridfile(lines)
+    numlines = len(formatted_lines)
+    for x in range(numlines):
+        write_string_set(formatted_lines[x], 10+x, 50)
+
 def display_datafile():
-    filename = data_file_array[index_datafile][0]
+    filename = data_file_array[index_datafile-1][0]
     filename = 'file: ' + trunc(filename, 11)
     write_string_set(filename, 1, num_cols-len(filename)-1)
 
@@ -248,6 +289,8 @@ def display_results():
         update()
 
 def update():
+    display_gridfile()
+    display_datafile()
     display_indices()
     print_visual()
 
@@ -257,7 +300,6 @@ def dest():
 init()
 print_data_files()
 print_metastats()
-display_datafile() #this should also be in a handler that updates
-display_indices() #this should also be in a handler that updates
+update()
 display_results()
 dest()
