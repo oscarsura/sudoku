@@ -12,22 +12,30 @@ mid_verti = u'\u2551'
 space_chr = u'\u0020'
 path = 'stats'
 
-visual_array = []
-unopt_array = []
-optim_array = []
+visual_array = [] #visual array is the screen output
+unopt_array = [] #unoptimized contains all, regardless of file
+optim_array = [] #optimized contains all, regardless of file
 
 runs = 0
 data_files = 0
-data_file_array = []
+entries_per_file = 0
+data_file_array = [] #contains [datafile, inode_info] pairs
+data_entry_array = [] #contains [datafile, [times]] pairs
 
 num_cols = 81
 num_rows = 38
 float_len = 14
 
-r,c = 1,1
+default_row = 1
+default_col_left = 1
+default_col_right = num_cols-2
+
+r,c = default_row, default_col_left
+rev_r, rev_c = default_row, default_col_right
 command_c = 42
 
-data_index = 0
+index_datafile = 0 #index within the file
+index_dataentry = 0 #index within all entries
 
 def clear():
     _ = system('clear')
@@ -92,6 +100,9 @@ def print_data_files():
         sys.stdout.write(filename + '\n')
         input_file = open(filename, 'r')
         lines = input_file.readlines()
+        file_entry_pair = [filename, lines]
+        global data_entry_array
+        data_entry_array.append(file_entry_pair)
         opt = False
         for line in lines:
             global runs
@@ -101,6 +112,8 @@ def print_data_files():
             opt = not opt
             sys.stdout.write('\t' + line)
             runs+=1
+        global entries_per_file
+        entries_per_file = int(data_files/runs)
 
 def write_string_buffer(s, char, buflen):
     global visual_array
@@ -115,7 +128,16 @@ def write_string_buffer(s, char, buflen):
             c+=1
         r+=1
         c=1
-    print_visual()
+
+def r_write_string(s):
+    global visual_array
+    global rev_r, rev_c
+    length = len(s)
+    for x in range(length):
+        visual_array[rev_r][rev_c] = s[length-1-x]
+        rev_c-=1
+    rev_r+=1
+    rev_c = default_col_right
 
 def write_string(s):
     global visual_array
@@ -125,7 +147,6 @@ def write_string(s):
         c+=1
     r+=1
     c=1
-    print_visual()
 
 def print_stats():
     avg_unopt = sum(unopt_array)/len(unopt_array)
@@ -140,7 +161,7 @@ def get_input():
     return line
 
 def move_entry(direction):
-    sys.stdout.write('moving')
+    print(data_entry_array)
 
 def next_entry():
     move_entry(1)
@@ -158,18 +179,31 @@ def switch_command(arg):
     func = switch.get(arg, lambda: l_clear)
     func()
 
+def trunc(string, i):
+    return string[:i]
+
+def display_datafile():
+    filename = data_file_array[index_datafile][0]
+    filename = trunc(filename, 11)
+    r_write_string('file: ' + filename)
+
+def display_indices():
+    None    
+
 def display_results():
+    print_visual()
     line = get_input()
     while True:
         switch_command(line)
         line = get_input()
+        print_visual()
 
 def dest():
     show_cursor()
 
 init()
 print_data_files()
-print_stats()
-print_visual()
+print_stats() #this should be in a handler that updates before while looping
+display_datafile() #this should also be in a handler that updates
 display_results()
 dest()
