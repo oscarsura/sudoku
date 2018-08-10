@@ -104,6 +104,7 @@ def print_data_files():
         global data_entry_array
         data_entry_array.append(file_entry_pair)
         opt = False
+        global unopt_array, optim_array
         for line in lines:
             global runs
             time = float(line)
@@ -112,8 +113,10 @@ def print_data_files():
             opt = not opt
             sys.stdout.write('\t' + line)
             runs+=1
+        unopt_array = sorted(unopt_array, key = lambda x: x)
+        optim_array = sorted(optim_array, key = lambda x: x)
         global entries_per_file
-        entries_per_file = int(runs/data_files)
+        entries_per_file = int((runs/2)/data_files)
 
 def write_string_buffer(s, char, buflen):
     global visual_array
@@ -167,10 +170,6 @@ def get_input():
     l_clear()
     return line
 
-def move_entry(direction):
-    print(data_entry_array)
-
-
 
 def next_entry():
     global index_dataentry
@@ -219,6 +218,9 @@ def format_gridfile(lines):
     for x in range(10):
         bar_horizontal += ' ' + dash_horizontal
     formatted_lines = []
+    header = '     '
+    header += 'Sudoku Solved'
+    formatted_lines.append(header)
     row_count = 0
     numlines = len(lines)
     for x in range(numlines):
@@ -239,6 +241,32 @@ def format_gridfile(lines):
         row_count+=1
     formatted_lines.append(bar_horizontal)
     return formatted_lines
+
+def find_rank(arr, time):
+    numentries = len(arr)
+    for x in range(numentries):
+        if arr[x] == time:
+            return x
+    return -1
+
+
+def display_metadata():
+    formatted_data = []
+    meta = 'metadata'
+    formatted_data.append(meta)
+    fileno = index_datafile-1
+    optim_time = data_entry_array[fileno][1][(index_dataentry*2)-1].strip()
+    optim_rank = find_rank(optim_array, optim_time)
+    unopt_time = data_entry_array[fileno][1][(index_dataentry*2)-2].strip()
+    unopt_rank = find_rank(unopt_array, unopt_time)
+    arrow = u'\u21FE'    
+    formatted_data.append('  ' + 'optim-rank ' + arrow + ' ' + str(optim_rank))
+    formatted_data.append('  ' + 'unopt-rank ' + arrow + ' ' + str(unopt_rank))
+    formatted_data.append('  ' + 'optim-time ' + arrow + ' ' + str(optim_time))
+    formatted_data.append('  ' + 'unopt-time ' + arrow + ' ' + str(unopt_time))
+    numlines = len(formatted_data)
+    for x in range(numlines):
+        write_string_set(formatted_data[x], 15+x, 5)
 
 def display_gridfile():
     meta = open('meta', 'r')
@@ -289,8 +317,9 @@ def display_results():
         update()
 
 def update():
-    display_gridfile()
     display_datafile()
+    display_metadata()
+    display_gridfile()
     display_indices()
     print_visual()
 
