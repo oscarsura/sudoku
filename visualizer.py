@@ -148,6 +148,13 @@ def write_string(s):
     r+=1
     c=1
 
+def write_string_set(s, row_num, col_num):
+    global visual_array
+    row, col = row_num, col_num
+    for char in s:
+        visual_array[row][col] = char
+        col+=1
+
 def print_stats():
     avg_unopt = sum(unopt_array)/len(unopt_array)
     avg_optim = sum(optim_array)/len(optim_array)
@@ -188,7 +195,26 @@ def display_datafile():
     r_write_string('file: ' + filename)
 
 def display_indices():
-    None    
+    entries = int(runs/2)
+    files = data_files
+    entry_index_str = ''
+    file_index_str = ''
+    if index_dataentry < 10 and entries > 9:
+        entry_index_str += '0'
+    entry_index_str += str(index_dataentry)
+    if index_datafile < 10 and files > 9:
+       file_index_str += '0'
+    file_index_str += str(index_datafile)
+    entry_arr = '[' + entry_index_str + '/' + str(entries) + ']'
+    file_arr = '[' + file_index_str + '/' + str(files) + ']'
+    
+    index_line_nospace = entry_arr + '   ' + file_arr
+    right_space = int((num_cols - 2 - len(index_line_nospace))/2)
+    index_line = ''
+    for x in range(right_space):
+        index_line += ' '
+    index_line += index_line_nospace
+    write_string_set(index_line, num_rows, 1)
 
 def display_results():
     print_visual()
@@ -205,5 +231,6 @@ init()
 print_data_files()
 print_stats() #this should be in a handler that updates before while looping
 display_datafile() #this should also be in a handler that updates
+display_indices() #this should also be in a handler that updates
 display_results()
 dest()
