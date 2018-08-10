@@ -113,7 +113,7 @@ def print_data_files():
             sys.stdout.write('\t' + line)
             runs+=1
         global entries_per_file
-        entries_per_file = int(data_files/runs)
+        entries_per_file = int(runs/data_files)
 
 def write_string_buffer(s, char, buflen):
     global visual_array
@@ -155,7 +155,7 @@ def write_string_set(s, row_num, col_num):
         visual_array[row][col] = char
         col+=1
 
-def print_stats():
+def print_metastats():
     avg_unopt = sum(unopt_array)/len(unopt_array)
     avg_optim = sum(optim_array)/len(optim_array)
     write_string_buffer('avg-unopt=' + str(avg_unopt), '0', float_len)
@@ -171,10 +171,14 @@ def move_entry(direction):
     print(data_entry_array)
 
 def next_entry():
-    move_entry(1)
+    global index_dataentry
+    index_dataentry = (index_dataentry+1) % (entries_per_file+1)
+    update()
 
 def prev_entry():
-    move_entry(-1)
+    global index_dataentry
+    index_dataentry = (index_dataentry-1) % (entries_per_file+1)
+    update()
 
 def switch_command(arg):
     switch = {
@@ -191,11 +195,11 @@ def trunc(string, i):
 
 def display_datafile():
     filename = data_file_array[index_datafile][0]
-    filename = trunc(filename, 11)
-    r_write_string('file: ' + filename)
+    filename = 'file: ' + trunc(filename, 11)
+    write_string_set(filename, 1, num_cols-len(filename)-1)
 
 def display_indices():
-    entries = int(runs/2)
+    entries = entries_per_file
     files = data_files
     entry_index_str = ''
     file_index_str = ''
@@ -219,17 +223,22 @@ def display_indices():
 def display_results():
     print_visual()
     line = get_input()
+    update()
     while True:
         switch_command(line)
         line = get_input()
-        print_visual()
+        update()
+
+def update():
+    display_indices()
+    print_visual()
 
 def dest():
     show_cursor()
 
 init()
 print_data_files()
-print_stats() #this should be in a handler that updates before while looping
+print_metastats()
 display_datafile() #this should also be in a handler that updates
 display_indices() #this should also be in a handler that updates
 display_results()
