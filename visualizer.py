@@ -276,8 +276,8 @@ def display_metadata():
     optim_rank = find_rank(optim_array, optim_time)
     unopt_time = data_entry_array[fileno][1][(index_dataentry*2)-2].strip()
     unopt_rank = find_rank(unopt_array, unopt_time)
-    optim_rank_str = expand(optim_rank, float_len - len(str(optim_rank)), ' ')
-    unopt_rank_str = expand(unopt_rank, float_len - len(str(unopt_rank)), ' ')
+    optim_rank_str = expand(optim_rank+1, float_len - len(str(optim_rank)), ' ')
+    unopt_rank_str = expand(unopt_rank+1, float_len - len(str(unopt_rank)), ' ')
     arrow = u'\u21FE'    
     formatted_data.append('  ' + 'optim-rank ' + arrow + ' ' + optim_rank_str)
     formatted_data.append('  ' + 'unopt-rank ' + arrow + ' ' + unopt_rank_str)
@@ -315,7 +315,7 @@ def display_iqr(rank, optimized, r):
         arr_iqr += ' '
     arr_iqr += string
     arr_iqr += '['
-    bars = int((1 -((rank+0.0)/runs))*iqr_range)
+    bars = int((((runs/2)-rank+0.0)/runs)*(iqr_range-2))
     for x in range(bars):
         arr_iqr += u'\u2588'
     for x in range(iqr_range-bars-2):
